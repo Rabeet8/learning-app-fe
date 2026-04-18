@@ -125,8 +125,8 @@ export default function AuthScreen() {
     <View style={styles.container}>
       <KeyboardAvoidingView
         style={styles.kavContainer}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'padding'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 60}
       >
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <ScrollView
@@ -145,109 +145,111 @@ export default function AuthScreen() {
               <View style={styles.cardEarLeft} />
               <View style={styles.cardEarRight} />
               <View style={styles.card}>
-              {/* Custom Toggle Bar */}
-              <View style={styles.toggleContainer}>
-                <TouchableOpacity
-                  style={[styles.toggleBtn, activeTab === 'login' && styles.activeToggle]}
-                  onPress={() => setActiveTab('login')}
-                  activeOpacity={0.7}
-                >
-                  <Text style={[styles.toggleText, activeTab === 'login' && styles.activeToggleText]}>Login</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[styles.toggleBtn, activeTab === 'signup' && styles.activeToggle]}
-                  onPress={() => setActiveTab('signup')}
-                  activeOpacity={0.7}
-                >
-                  <Text style={[styles.toggleText, activeTab === 'signup' && styles.activeToggleText]}>Sign Up</Text>
-                </TouchableOpacity>
-              </View>
+                {/* Custom Toggle Bar */}
+                <View style={styles.toggleContainer}>
+                  <TouchableOpacity
+                    style={[styles.toggleBtn, activeTab === 'login' && styles.activeToggle]}
+                    onPress={() => setActiveTab('login')}
+                    activeOpacity={0.7}
+                  >
+                    <Text style={[styles.toggleText, activeTab === 'login' && styles.activeToggleText]}>Login</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.toggleBtn, activeTab === 'signup' && styles.activeToggle]}
+                    onPress={() => setActiveTab('signup')}
+                    activeOpacity={0.7}
+                  >
+                    <Text style={[styles.toggleText, activeTab === 'signup' && styles.activeToggleText]}>Sign Up</Text>
+                  </TouchableOpacity>
+                </View>
 
-              {/* Inputs */}
-              <View style={styles.formContainer}>
-                <TextInput
-                  label="Email"
-                  value={email}
-                  onChangeText={setEmail}
-                  mode="outlined"
-                  theme={{ roundness: 20 }}
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                  style={styles.input}
-                  outlineColor="#f1f5f9"
-                  activeOutlineColor="#8b5cf6"
-                  left={<TextInput.Icon icon="email-outline" color="#8b5cf6" />}
-                />
+                {/* Inputs */}
+                <View style={styles.formContainer}>
+                  <TextInput
+                    label="Email"
+                    value={email}
+                    onChangeText={setEmail}
+                    mode="outlined"
+                    theme={{ roundness: 20 }}
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    style={styles.input}
+                    contentStyle={{ paddingHorizontal: 15 }}
+                    outlineColor="#f1f5f9"
+                    activeOutlineColor="#8b5cf6"
+                    left={<TextInput.Icon icon="email-outline" color="#8b5cf6" />}
+                  />
 
-                <TextInput
-                  label="Password"
-                  value={password}
-                  onChangeText={setPassword}
-                  mode="outlined"
-                  theme={{ roundness: 20 }}
-                  secureTextEntry
-                  style={styles.input}
-                  outlineColor="#f1f5f9"
-                  activeOutlineColor="#8b5cf6"
-                  left={<TextInput.Icon icon="lock-plus" color="#8b5cf6" />}
-                />
+                  <TextInput
+                    label="Password"
+                    value={password}
+                    onChangeText={setPassword}
+                    mode="outlined"
+                    theme={{ roundness: 20 }}
+                    secureTextEntry
+                    style={styles.input}
+                    outlineColor="#f1f5f9"
+                    activeOutlineColor="#8b5cf6"
+                    left={<TextInput.Icon icon="lock-plus" color="#8b5cf6" />}
+                  />
 
-                {activeTab === 'signup' && (
-                  <View style={styles.signupLayout}>
-                    <View style={styles.dividerRow}>
-                      <View style={styles.dividerLine} />
-                      <Text style={styles.sectionTitle}>Child Profile</Text>
-                      <View style={styles.dividerLine} />
+                  {activeTab === 'signup' && (
+                    <View style={styles.signupLayout}>
+                      <View style={styles.dividerRow}>
+                        <View style={styles.dividerLine} />
+                        <Text style={styles.sectionTitle}>Child Profile</Text>
+                        <View style={styles.dividerLine} />
+                      </View>
+
+                      <TextInput
+                        label="Child's Name"
+                        value={childName}
+                        onChangeText={setChildName}
+                        mode="outlined"
+                        theme={{ roundness: 20 }}
+                        style={styles.input}
+                        outlineColor="#f1f5f9"
+                        activeOutlineColor="#10b981"
+                        left={<TextInput.Icon icon="face-man" color="#10b981" />}
+                        onFocus={() => {
+                          setTimeout(() => scrollViewRef.current?.scrollToEnd({ animated: true }), 300);
+                        }}
+                      />
+
+                      <TextInput
+                        label="Child's Age"
+                        value={childAge}
+                        onChangeText={setChildAge}
+                        mode="outlined"
+                        theme={{ roundness: 20 }}
+                        keyboardType="numeric"
+                        style={styles.input}
+                        outlineColor="#f1f5f9"
+                        activeOutlineColor="#f59e0b"
+                        left={<TextInput.Icon icon="cake-variant" color="#f59e0b" />}
+                        onFocus={() => {
+                          setTimeout(() => scrollViewRef.current?.scrollToEnd({ animated: true }), 300);
+                        }}
+                      />
                     </View>
+                  )}
 
-                    <TextInput
-                      label="Child's Name"
-                      value={childName}
-                      onChangeText={setChildName}
-                      mode="outlined"
-                      theme={{ roundness: 20 }}
-                      style={styles.input}
-                      outlineColor="#f1f5f9"
-                      activeOutlineColor="#10b981"
-                      left={<TextInput.Icon icon="face-man" color="#10b981" />}
-                      onFocus={() => {
-                        setTimeout(() => scrollViewRef.current?.scrollToEnd({ animated: true }), 300);
-                      }}
-                    />
-
-                    <TextInput
-                      label="Child's Age"
-                      value={childAge}
-                      onChangeText={setChildAge}
-                      mode="outlined"
-                      theme={{ roundness: 20 }}
-                      keyboardType="numeric"
-                      style={styles.input}
-                      outlineColor="#f1f5f9"
-                      activeOutlineColor="#f59e0b"
-                      left={<TextInput.Icon icon="cake-variant" color="#f59e0b" />}
-                      onFocus={() => {
-                        setTimeout(() => scrollViewRef.current?.scrollToEnd({ animated: true }), 300);
-                      }}
-                    />
-                  </View>
-                )}
-
-                <Button
-                  mode="contained"
-                  onPress={handleAuth}
-                  loading={loading}
-                  disabled={loading}
-                  style={styles.actionButton}
-                  contentStyle={styles.actionButtonContent}
-                  labelStyle={styles.actionButtonText}
-                  icon={activeTab === 'login' ? 'rocket-launch' : 'star'}
-                >
-                  {activeTab === 'login' ? "Let's Go!" : "Create Profile"}
-                </Button>
+                  <Button
+                    mode="contained"
+                    onPress={handleAuth}
+                    loading={loading}
+                    disabled={loading}
+                    style={styles.actionButton}
+                    contentStyle={styles.actionButtonContent}
+                    labelStyle={styles.actionButtonText}
+                    icon={activeTab === 'login' ? 'rocket-launch' : 'star'}
+                  >
+                    {activeTab === 'login' ? "Let's Go!" : "Create Profile"}
+                  </Button>
+                </View>
               </View>
             </View>
-          </View>
 
             {/* Bottom spacer for keyboard */}
             <View style={{ height: 60 }} />
@@ -374,6 +376,8 @@ const styles = StyleSheet.create({
   input: {
     backgroundColor: '#fff',
     marginBottom: 12,
+    height: 56,
+    fontSize: 15,
   },
   signupLayout: {
     marginTop: 6,

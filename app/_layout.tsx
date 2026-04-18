@@ -5,7 +5,7 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
-import { AppProvider } from '../context/AppContext';
+import { AppContext, AppProvider } from '../context/AppContext';
 import { PaperProvider, MD3LightTheme } from 'react-native-paper';
 
 export {
@@ -26,7 +26,7 @@ export default function RootLayout() {
   });
 
   useEffect(() => {
-    if (error) throw error;
+    if (error) console.error('Font loading error:', error);
   }, [error]);
 
   useEffect(() => {
@@ -51,50 +51,27 @@ export default function RootLayout() {
 import { supabase } from '@/lib/supabase';
 import { useRouter, useSegments } from 'expo-router';
 
+import { useContext } from 'react';
+
 function useProtectedRoute(loaded: boolean) {
   const segments = useSegments();
   const router = useRouter();
+  const { isAuthenticated } = useContext(AppContext);
 
   useEffect(() => {
     if (!loaded) return;
 
-    // Supabase enforces and manages sessions via AsyncStorage internally.
-    const initializeAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      const inAuthGroup = segments[0] !== '(tabs)';
+    const inTabsGroup = segments[0] === '(tabs)';
 
-      if (!session && !inAuthGroup) {
-        // If the user is unauthenticated and tries to access the protected layout
-        router.replace('/');
-      } else if (session && inAuthGroup) {
-        // If the user has a valid session but is trapped on the auth screen
-        router.replace('/(tabs)');
-      }
-    };
-
-    initializeAuth();
-
-    // The listener fires whenever the intrinsic token states explicitly shift (login / logout)
-    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
-      const inAuthGroup = segments[0] !== '(tabs)';
-      
-      if (event === 'SIGNED_OUT' || !session) {
-        // Force replace to auth screen
-        router.replace('/');
-      } else if (session && inAuthGroup) {
-        // Ensure successful logins natively bounce to the protected interface
-        router.replace('/(tabs)');
-      }
-    });
-
-    return () => {
-      authListener.subscription.unsubscribe();
-    };
-  }, [loaded, segments]);
+    if (!isAuthenticated && inTabsGroup) {
+      router.replace('/');
+    } else if (isAuthenticated && !inTabsGroup) {
+      router.replace('/(tabs)');
+    }
+  }, [loaded, segments, isAuthenticated]);
 }
 
 function RootLayoutNav({ loaded }: { loaded: boolean }) {
-  // Drives global dynamic routing organically hooked into Supabase state
   useProtectedRoute(loaded);
 
   return (

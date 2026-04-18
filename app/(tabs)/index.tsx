@@ -97,16 +97,13 @@ export default function TabOneScreen() {
   }, []);
 
   const handleCorrect = () => {
-    setFeedback({ text: 'Great!', status: 'success' });
+    setFeedback({ text: 'Success', status: 'success' });
     incrementScore();
     clearFeedbackAndNext(true);
   };
 
   const handleIncorrect = (wrongWord?: string) => {
-    const errorText = wrongWord
-      ? `You said "${wrongWord}", let's try again`
-      : "Oops, try again!";
-    setFeedback({ text: errorText, status: 'error' });
+    setFeedback({ text: 'Try Again', status: 'error' });
     clearFeedbackAndNext(false);
   };
 
@@ -287,7 +284,7 @@ export default function TabOneScreen() {
         <View style={styles.headerRow}>
           <View style={styles.titleContainer}>
             <Text style={styles.mainTitle}>
-              {childProfile ? `Hi, ${childProfile.name}!` : "Kid"}
+              {childProfile ? `Hi, ${childProfile.name}!` : "Hi Kid!"}
             </Text>
             <Text style={styles.subTitle}>Let's Learn!</Text>
           </View>

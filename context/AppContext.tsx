@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { supabase } from '../lib/supabase';
 
 interface ChildProfile {
   name: string;
@@ -34,10 +35,38 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     loadData();
+
+    // Listen for auth changes to keep context in sync
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_OUT' || !session) {
+        setIsAuthenticated(false);
+        setChildProfile(null);
+      } else if (session) {
+        setIsAuthenticated(true);
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   const loadData = async () => {
     try {
+      // Check actual Supabase session first
+      const { data: { session }, error } = await supabase.auth.getSession();
+      
+      if (error) {
+        // If the token is invalid or expired, clear everything locally
+        console.warn('Session restoration failed:', error.message);
+        await logout();
+        return;
+      }
+
+      if (session) {
+        setIsAuthenticated(true);
+      } else {
+        setIsAuthenticated(false);
+      }
+
       const storedScore = await AsyncStorage.getItem('@score');
       if (storedScore !== null) {
         setScore(parseInt(storedScore, 10));
